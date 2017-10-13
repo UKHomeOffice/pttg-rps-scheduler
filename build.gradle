@@ -1,0 +1,85 @@
+buildscript {
+  ext {
+    springBootVersion = '1.5.2.RELEASE'
+  }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
+}
+
+version = '0.0.1'
+
+if (System.getenv('VERSION')) {
+  version = System.getenv('VERSION')
+}
+if (System.getenv('BUILD_NUMBER')) {
+  version = version + '-' + System.getenv('BUILD_NUMBER')
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'jacoco'
+
+checkstyle {
+  ignoreFailures = false
+}
+findbugs {
+  ignoreFailures = false
+}
+gradle.taskGraph.beforeTask { task -> if ( task.name == "checkstyleTest") {task.deleteAllActions()}}
+tasks.withType(FindBugs) {
+  excludeFilter = file('config/findbugs/exclude-filter.xml')
+  reports {
+    xml.enabled false
+    html.enabled true
+  }
+}
+
+
+jar {
+  baseName = 'pttg-rps-scheduler'
+  if (System.getenv('GIT_COMMIT')) {
+    version = version + '.' + System.getenv('GIT_COMMIT')
+  }
+  manifest {
+    attributes 'Implementation-Title': baseName,
+               'Implementation-Version': version
+  }
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}") {
+    exclude module: "spring-boot-starter-tomcat"
+  }
+
+  compile group:'org.springframework.boot', name: 'spring-boot-starter-actuator', version: "$springBootVersion"
+  compile group:'org.springframework.boot', name: 'spring-boot-starter-jetty',    version: "$springBootVersion"
+  compile group:'org.springframework.boot', name: 'spring-boot-devtools',         version: "$springBootVersion"
+
+  compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+  compile group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '4.8'
+  compile group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1u2'
+  compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+  compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
+
+  compileOnly 'org.projectlombok:lombok:1.16.12'
+
+  testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile group: 'org.assertj', name: 'assertj-core', version: '3.5.2'
+  testCompile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
+
+}
+gradle.startParameter.continueOnFailure = false
