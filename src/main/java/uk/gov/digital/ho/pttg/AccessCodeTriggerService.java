@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,6 +15,8 @@ import org.springframework.web.client.RestTemplate;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Base64;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
 @Slf4j
@@ -48,10 +48,8 @@ public class AccessCodeTriggerService {
     private HttpEntity basicAuthRequest() {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.set("AUTHENTICATION",
+        headers.set(AUTHORIZATION,
                     String.format("Basic %s", Base64.getEncoder().encodeToString(hmrcAccessBasicAuth.getBytes(Charset.forName("utf-8")))));
-
-        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
 
         return new HttpEntity(headers);
     }

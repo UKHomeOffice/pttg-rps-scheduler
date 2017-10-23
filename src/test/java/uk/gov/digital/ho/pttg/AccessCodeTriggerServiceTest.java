@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccessCodeTriggerServiceTest {
@@ -33,8 +34,7 @@ public class AccessCodeTriggerServiceTest {
     @Test
     public void shouldCallAccessCodeRefreshUrl() {
         HttpHeaders basicAuthHeaders = new HttpHeaders();
-        basicAuthHeaders.set("AUTHENTICATION", "Basic YWJjOjEyMw==");
-        basicAuthHeaders.set("Content-Type", "text/plain");
+        basicAuthHeaders.set(AUTHORIZATION, "Basic YWJjOjEyMw==");
         HttpEntity entity = new HttpEntity<String>(basicAuthHeaders);
 
         service.triggerNewAccessCode();
