@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,11 +47,11 @@ public class AccessCodeTriggerService {
 
     private HttpEntity basicAuthRequest() {
 
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setContentType(MediaType.TEXT_PLAIN);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.set("AUTHENTICATION",
                     String.format("Basic %s", Base64.getEncoder().encodeToString(hmrcAccessBasicAuth.getBytes(Charset.forName("utf-8")))));
+
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
 
         return new HttpEntity(headers);
     }
