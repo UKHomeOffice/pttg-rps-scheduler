@@ -34,6 +34,7 @@ public class AccessCodeTriggerServiceTest {
     public void shouldCallAccessCodeRefreshUrl() {
         HttpHeaders basicAuthHeaders = new HttpHeaders();
         basicAuthHeaders.set("AUTHENTICATION", "Basic YWJjOjEyMw==");
+        basicAuthHeaders.set("Content-Type", "text/plain");
         HttpEntity entity = new HttpEntity<String>(basicAuthHeaders);
 
         service.triggerNewAccessCode();
